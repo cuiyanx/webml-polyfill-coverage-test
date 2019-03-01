@@ -8,7 +8,7 @@ addons:
 
 install:
   - npm install
+  - node test-coverage-ci.js
 
 script:
-  - node test-coverage-ci.js
   - npm run coverage
