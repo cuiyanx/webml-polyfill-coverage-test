@@ -23,11 +23,11 @@ excludeFiles.push("nn_ops.js");
 
 var arrayJSON = new Array();
 
-var reportTreePath = path.resolve(rootPath, "report-tree");
-var reportPathVersion = path.resolve(reportTreePath, webmlpolyfillCommit);
-var reportPathAll = path.resolve(reportPathVersion, "all");
+//var reportTreePath = path.resolve(rootPath, "report-tree");
+//var reportPathVersion = path.resolve(reportTreePath, webmlpolyfillCommit);
+//var reportPathAll = path.resolve(reportPathVersion, "all");
 var reportPathShow = path.resolve(rootPath, "coverage");
-
+/*
 if (!fs.existsSync(reportTreePath)) {
     fs.mkdirSync(reportTreePath);
 }
@@ -39,17 +39,17 @@ if (!fs.existsSync(reportPathVersion)) {
 if (!fs.existsSync(reportPathAll)) {
     fs.mkdirSync(reportPathAll);
 }
-
+*/
 if (!fs.existsSync(reportPathShow)) {
     fs.mkdirSync(reportPathShow);
 }
-
+/*
 for (let backend of testBackend) {
     if (!fs.existsSync(path.resolve(reportPathVersion, backend))) {
         fs.mkdirSync(path.resolve(reportPathVersion, backend));
     }
 }
-
+*/
 var deleteDir = function (targetPath, flag) {
     let files = [];
 
@@ -198,11 +198,10 @@ var driver, chromeOption, testURL;
 
             await driver.executeScript("return window.__coverage__;").then(function(json) {
                 if (json !== null) {
-                    arrayJSON.push(json);
-
                     // Generate coverage test repoert with backend
                     let jsonTemp = excludeHandler(json);
-                    generateReport(jsonTemp, path.resolve(reportPathVersion, backend), false);
+                    arrayJSON.push(jsonTemp);
+//                    generateReport(jsonTemp, path.resolve(reportPathVersion, backend), false);
                 } else {
                     throw new Error("'window.__coverage__' is undefined");
                 }
@@ -218,7 +217,7 @@ var driver, chromeOption, testURL;
 
     // Generate coverage test repoert with all backends
     var allSourceJSON = integrationJSON(arrayJSON);
-    generateReport(allSourceJSON, reportPathAll, false);
+//    generateReport(allSourceJSON, reportPathAll, false);
     generateReport(allSourceJSON, reportPathShow, true);
 /*
     driver = new Builder()
