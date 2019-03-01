@@ -11,7 +11,8 @@
     "start": "webpack-dev-server --open",
     "build": "webpack",
     "build-wasm": "node build.js --build-wasm",
-    "test": "node test-ci.js"
+    "test": "node test-ci.js",
+    "coverage": "cd test/tools/CoverageManager/ && npm install && npm start"
   },
   "repository": {
     "type": "git",
