@@ -1,5 +1,5 @@
 {
     "webmlpolyfillCommit": "d677572",
-    "remoteURL": "https://cuiyanx.github.io/webml-polyfill-coverage-test/test/index.html",
+    "remoteURL": "http://localhost:8080/test/index.html",
     "browser": "/usr/bin/google-chrome"
 }
