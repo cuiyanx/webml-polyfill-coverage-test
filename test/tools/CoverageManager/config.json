@@ -4,5 +4,5 @@
         "path": "../../../"
     },
     "remoteURL": "http://localhost:8080/test/index.html",
-    "browser": "/usr/bin/google-chrome"
+    "browser": "/usr/bin/google-chrome-stable"
 }
