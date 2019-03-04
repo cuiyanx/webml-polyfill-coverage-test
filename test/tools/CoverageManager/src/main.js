@@ -219,8 +219,8 @@ var driver, chromeOption, testURL;
         chromeOption = chromeOption
             .setChromeBinaryPath(browser)
             .addArguments("--disable-features=WebML")
-            .addArguments("no-sandbox")
-            .headless();
+            .addArguments("no-sandbox");
+//            .headless();
 
         driver = new Builder()
             .forBrowser("chrome")
@@ -247,7 +247,7 @@ var driver, chromeOption, testURL;
                     let jsonTemp = relocationSRC(json);
                     jsonTemp = excludeHandler(jsonTemp);
                     arrayJSON.push(jsonTemp);
-//                    generateReport(jsonTemp, path.resolve(reportPathVersion, backend), false);
+                    generateReport(jsonTemp, path.resolve(reportPathVersion, backend), false);
                 } else {
                     throw new Error("'window.__coverage__' is undefined");
                 }
@@ -263,7 +263,7 @@ var driver, chromeOption, testURL;
 
     // Generate coverage test repoert with all backends
     var allSourceJSON = integrationJSON(arrayJSON);
-//    generateReport(allSourceJSON, reportPathAll, false);
+    generateReport(allSourceJSON, reportPathAll, false);
     generateReport(allSourceJSON, reportPathShow, true);
 /*
     driver = new Builder()
