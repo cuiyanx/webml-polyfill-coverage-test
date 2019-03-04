@@ -10,7 +10,8 @@ require("chromedriver");
 var rootPath = path.resolve(__dirname, "..");
 
 var configCM = JSON.parse(fs.readFileSync(path.resolve(rootPath, "config.json")));
-var webmlpolyfillCommit = configCM.webmlpolyfillCommit;
+var webmlpolyfillCommit = configCM.webmlpolyfill.commit;
+var webmlpolyfillPath = configCM.webmlpolyfill.path;
 var remoteURL = configCM.remoteURL;
 var browser = configCM.browser;
 
@@ -19,15 +20,15 @@ testBackend.push("wasm");
 testBackend.push("webgl");
 
 var excludeFiles = new Array();
-excludeFiles.push("nn_ops.js");
+excludeFiles.push("/src/nn/wasm/nn_ops.js");
 
 var arrayJSON = new Array();
 
-//var reportTreePath = path.resolve(rootPath, "report-tree");
-//var reportPathVersion = path.resolve(reportTreePath, webmlpolyfillCommit);
-//var reportPathAll = path.resolve(reportPathVersion, "all");
+var reportTreePath = path.resolve(rootPath, "report-tree");
+var reportPathVersion = path.resolve(reportTreePath, webmlpolyfillCommit);
+var reportPathAll = path.resolve(reportPathVersion, "all");
 var reportPathShow = path.resolve(rootPath, "coverage");
-/*
+
 if (!fs.existsSync(reportTreePath)) {
     fs.mkdirSync(reportTreePath);
 }
@@ -39,17 +40,17 @@ if (!fs.existsSync(reportPathVersion)) {
 if (!fs.existsSync(reportPathAll)) {
     fs.mkdirSync(reportPathAll);
 }
-*/
+
 if (!fs.existsSync(reportPathShow)) {
     fs.mkdirSync(reportPathShow);
 }
-/*
+
 for (let backend of testBackend) {
     if (!fs.existsSync(path.resolve(reportPathVersion, backend))) {
         fs.mkdirSync(path.resolve(reportPathVersion, backend));
     }
 }
-*/
+
 var deleteDir = function (targetPath, flag) {
     let files = [];
 
@@ -72,19 +73,63 @@ var deleteDir = function (targetPath, flag) {
     }
 }
 
+var relocationSRC = function (sourceJSON) {
+    let tmpJSON = new Object();
+
+    if (webmlpolyfillPath !== "default") {
+        let pathArray = webmlpolyfillPath.split("/");
+        let objectPath = rootPath;
+
+        for (let pathName of pathArray) {
+            objectPath = path.resolve(objectPath, pathName);
+        }
+
+        for (let [keyLevel1, valueLevel1] of Object.entries(sourceJSON)) {
+            let objectLevel2 = new Object();
+
+            for (let [keyLevel2, valueLevel2] of Object.entries(valueLevel1)) {
+                if (keyLevel2 == "path") {
+                    let tmpPath = objectPath + valueLevel2.slice(valueLevel2.search("/src/"));
+                    objectLevel2[keyLevel2] = tmpPath;
+
+//                    console.log("path: " + tmpPath);
+                } else {
+                    objectLevel2[keyLevel2] = valueLevel2;
+                }
+            }
+
+            let tmpKey = objectPath + keyLevel1.slice(keyLevel1.search("/src/"));
+            tmpJSON[tmpKey] = objectLevel2;
+
+//            console.log("key: " + tmpKey);
+        }
+
+        return tmpJSON;
+    } else {
+        return sourceJSON;
+    }
+}
+
 var excludeHandler = function (sourceJSON) {
-    for (let key of Object.keys(sourceJSON)) {
-        let fileName = path.basename(key);
+    let tmpJSON = new Object();
+
+    for (let [key, value] of Object.entries(sourceJSON)) {
+        let flag = false;
 
         for (let file of excludeFiles) {
-            if (fileName == file) {
-                console.log("exclude file: " + key);
-                delete sourceJSON[key];
+            if (key.search(file) !== -1) {
+                flag = true;
             }
+        }
+
+        if (flag) {
+            console.log("exclude file: " + key);
+        } else {
+            tmpJSON[key] = value;
         }
     }
 
-    return sourceJSON;
+    return tmpJSON;
 }
 
 var integrationJSON = function (arrayJSON) {
@@ -173,9 +218,7 @@ var driver, chromeOption, testURL;
 
         chromeOption = chromeOption
             .setChromeBinaryPath(browser)
-            .addArguments("no-sandbox")
-            .addArguments("--disable-features=WebML")
-            .headless();
+            .addArguments("--disable-features=WebML");
 
         driver = new Builder()
             .forBrowser("chrome")
@@ -199,9 +242,10 @@ var driver, chromeOption, testURL;
             await driver.executeScript("return window.__coverage__;").then(function(json) {
                 if (json !== null) {
                     // Generate coverage test repoert with backend
-                    let jsonTemp = excludeHandler(json);
+                    let jsonTemp = relocationSRC(json);
+                    jsonTemp = excludeHandler(jsonTemp);
                     arrayJSON.push(jsonTemp);
-//                    generateReport(jsonTemp, path.resolve(reportPathVersion, backend), false);
+                    generateReport(jsonTemp, path.resolve(reportPathVersion, backend), false);
                 } else {
                     throw new Error("'window.__coverage__' is undefined");
                 }
@@ -217,16 +261,15 @@ var driver, chromeOption, testURL;
 
     // Generate coverage test repoert with all backends
     var allSourceJSON = integrationJSON(arrayJSON);
-//    generateReport(allSourceJSON, reportPathAll, false);
+    generateReport(allSourceJSON, reportPathAll, false);
     generateReport(allSourceJSON, reportPathShow, true);
-/*
+
     driver = new Builder()
         .forBrowser("chrome")
         .setChromeOptions(new Chrome.Options().setChromeBinaryPath(browser))
         .build();
 
     await driver.get("file://" + path.resolve(reportPathShow, "lcov-report", "index.html"));
-*/
 })().then(function() {
     console.log("coverage report is completed");
 }).catch(function(err) {
