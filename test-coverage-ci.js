@@ -11,7 +11,7 @@ const childprocess = require("child_process");
         }
     });
 
-    commands = "cd test/tools/CoverageManager/ && npm install && npm start";
+    commands = "cd test/tools/CoverageManager/ && npm install && npm start && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js";
 
     childprocess.execSync(commands, {stdio: "inherit"});
 })().then(function() {

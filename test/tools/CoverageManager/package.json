@@ -18,7 +18,8 @@
   "homepage": "https://github.com/cuiyanx/CoverageManager#readme",
   "devDependencies": {
     "chromedriver": "^2.41.0",
-    "selenium-webdriver": "^4.0.0-alpha.1",
-    "istanbul": "^0.4.5"
+    "coveralls": "^3.0.3",
+    "istanbul": "^0.4.5",
+    "selenium-webdriver": "^4.0.0-alpha.1"
   }
 }
