@@ -217,7 +217,7 @@ var driver, chromeOption, testURL;
         testURL = remoteURL + "?backend=" + backend;
 
         chromeOption = chromeOption
-            .setChromeBinaryPath(browser)
+//            .setChromeBinaryPath(browser)
             .addArguments("--disable-features=WebML")
             .addArguments("--no-sandbox");
 
