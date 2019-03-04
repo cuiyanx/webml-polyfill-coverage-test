@@ -9,5 +9,8 @@ addons:
 install:
   - npm install
 
+before_script:
+  - "export DISPLAY=:99.0"
+
 script:
   - node test-coverage-ci.js

@@ -219,8 +219,8 @@ var driver, chromeOption, testURL;
         chromeOption = chromeOption
             .setChromeBinaryPath(browser)
             .addArguments("--disable-features=WebML")
-            .addArguments("no-sandbox");
-//            .headless();
+//            .addArguments("--headless")
+            .addArguments("--no-sandbox");
 
         driver = new Builder()
             .forBrowser("chrome")
