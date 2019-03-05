@@ -148,13 +148,10 @@ var driver, chromeOption, testURL;
 (async function() {
     console.log("webml-polyfill web host is start");
 
-    var commands;
-    commands = "NODE_ENV=coverage npm start";
-    var webml = childprocess.exec(commands, function (err, stdout, stderr) {
-        if (err != null) {
-            console.log("command fail, error message : ", err);
-            process.exit(1);
-        }
+    var webmlpolyfillHost = childprocess.spawn("node_modules/.bin/webpack-dev-server", {stdio: "inherit", env: {NODE_ENV: "coverage"}});
+
+    webmlpolyfillHost.on("close", function(code, signal) {
+        console.log("process webmlpolyfillHost terminated due to receipt of signal " + signal);
     });
 
     console.log("coverage report is start");
@@ -172,7 +169,7 @@ var driver, chromeOption, testURL;
             .setChromeOptions(chromeOption)
             .build();
 
-        await driver.sleep(3000);
+        await driver.sleep(5000);
         await driver.get(testURL);
         await driver.wait(until.elementLocated(By.xpath("//*[@id='mocha-stats']/li[1]/canvas")), 100000).then(function() {
             console.log("open remote URL: " + testURL);
@@ -210,8 +207,10 @@ var driver, chromeOption, testURL;
 
     console.log("send coverage report to coverage web");
 
-    commands = "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js";
-    childprocess.execSync(commands, {stdio: "inherit"});
+    let commands = "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js";
+    await childprocess.execSync(commands, {stdio: "inherit"});
+
+    webmlpolyfillHost.kill("SIGTERM");
 })().then(function() {
     console.log("Coverage test completed!");
     process.exit(0);
