@@ -3,6 +3,6 @@
         "commit": "d677572",
         "path": "../../../"
     },
-    "remoteURL": "http://localhost:8080/test/index.html",
+    "remoteURL": "http://localhost:8080/test/coverage-index.html",
     "browser": "/usr/bin/google-chrome-stable"
 }
