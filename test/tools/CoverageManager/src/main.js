@@ -7,7 +7,7 @@ const path = require("path");
 const fs = require("fs");
 require("chromedriver");
 
-var objectPath = "https://github.com/cuiyanx/webml-polyfill-coverage-test/tree/master/";
+var objectPath = "https://github.com/cuiyanx/webml-polyfill-coverage-test/blob/master";
 var rootPath = path.resolve(__dirname, "..");
 
 var configCM = JSON.parse(fs.readFileSync(path.resolve(rootPath, "config.json")));
