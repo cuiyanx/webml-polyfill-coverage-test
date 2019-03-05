@@ -146,9 +146,10 @@ var generateReport = function (sourceJSON, targetPath, showReport) {
 
 var driver, chromeOption, testURL;
 (async function() {
+    console.log("webml-polyfill web host is start");
+
     var commands;
     commands = "NODE_ENV=coverage npm start";
-
     var webml = childprocess.exec(commands, function (err, stdout, stderr) {
         if (err != null) {
             console.log("command fail, error message : ", err);
@@ -171,11 +172,12 @@ var driver, chromeOption, testURL;
             .setChromeOptions(chromeOption)
             .build();
 
+        await driver.sleep(3000);
         await driver.get(testURL);
         await driver.wait(until.elementLocated(By.xpath("//*[@id='mocha-stats']/li[1]/canvas")), 100000).then(function() {
             console.log("open remote URL: " + testURL);
         }).catch(function() {
-            throw new Error("failed to load web page");
+            throw new Error("failed to load web page: " + testURL);
         });
 
         await driver.wait(async function() {
@@ -205,6 +207,8 @@ var driver, chromeOption, testURL;
     // Generate coverage test repoert with all backends
     var allSourceJSON = integrationJSON(arrayJSON);
     await generateReport(allSourceJSON, reportPathShow, true);
+
+    console.log("send coverage report to coverage web");
 
     commands = "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js";
     childprocess.execSync(commands, {stdio: "inherit"});
