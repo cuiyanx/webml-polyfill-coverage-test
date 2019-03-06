@@ -14,9 +14,11 @@ before_install:
 
 install:
   - npm install
+  - npm run build
 
 before_script:
   - export NODE_ENV=coverage
 
 script:
+  - npm test
   - node test-coverage.js
