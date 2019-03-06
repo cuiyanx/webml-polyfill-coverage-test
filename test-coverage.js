@@ -148,7 +148,7 @@ var driver, chromeOption, testURL;
 (async function() {
     console.log("webml-polyfill web host is start");
 
-    var webmlpolyfillHost = childprocess.spawn("npm", ["start"], {stdio: "inherit"});
+    var webmlpolyfillHost = childprocess.spawn("./node_modules/webpack-dev-server/bin/webpack-dev-server.js", {stdio: "inherit"});
 
     webmlpolyfillHost.on("close", function(code, signal) {
         console.log("process webmlpolyfillHost terminated due to receipt of signal");

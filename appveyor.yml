@@ -4,10 +4,6 @@ clone_depth: 5
 install:
     - npm install
     - npm run build
-
 test_script:
-    - set NODE_ENV=coverage
     - npm test
-    - node test-coverage.js
-
 build: off
