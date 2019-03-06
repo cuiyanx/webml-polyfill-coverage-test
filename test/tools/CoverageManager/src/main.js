@@ -7,12 +7,10 @@ const path = require("path");
 const fs = require("fs");
 require("chromedriver");
 
-var objectPath = "https://github.com/cuiyanx/webml-polyfill-coverage-test/blob/master";
 var rootPath = path.resolve(__dirname, "..");
 
 var configCM = JSON.parse(fs.readFileSync(path.resolve(rootPath, "config.json")));
-var webmlpolyfillCommit = configCM.webmlpolyfill.commit;
-var webmlpolyfillPath = configCM.webmlpolyfill.path;
+var webmlpolyfillCommit = configCM.webmlpolyfillCommit;
 var remoteURL = configCM.remoteURL;
 var browser = configCM.browser;
 
@@ -21,15 +19,15 @@ testBackend.push("wasm");
 testBackend.push("webgl");
 
 var excludeFiles = new Array();
-excludeFiles.push("/src/nn/wasm/nn_ops.js");
+excludeFiles.push("nn_ops.js");
 
 var arrayJSON = new Array();
 
-//var reportTreePath = path.resolve(rootPath, "report-tree");
-//var reportPathVersion = path.resolve(reportTreePath, webmlpolyfillCommit);
-//var reportPathAll = path.resolve(reportPathVersion, "all");
+var reportTreePath = path.resolve(rootPath, "report-tree");
+var reportPathVersion = path.resolve(reportTreePath, webmlpolyfillCommit);
+var reportPathAll = path.resolve(reportPathVersion, "all");
 var reportPathShow = path.resolve(rootPath, "coverage");
-/*
+
 if (!fs.existsSync(reportTreePath)) {
     fs.mkdirSync(reportTreePath);
 }
@@ -41,17 +39,17 @@ if (!fs.existsSync(reportPathVersion)) {
 if (!fs.existsSync(reportPathAll)) {
     fs.mkdirSync(reportPathAll);
 }
-*/
+
 if (!fs.existsSync(reportPathShow)) {
     fs.mkdirSync(reportPathShow);
 }
-/*
+
 for (let backend of testBackend) {
     if (!fs.existsSync(path.resolve(reportPathVersion, backend))) {
         fs.mkdirSync(path.resolve(reportPathVersion, backend));
     }
 }
-*/
+
 var deleteDir = function (targetPath, flag) {
     let files = [];
 
@@ -71,44 +69,6 @@ var deleteDir = function (targetPath, flag) {
 
     if (flag) {
         fs.rmdirSync(targetPath);
-    }
-}
-
-var relocationSRC = function (sourceJSON) {
-    let tmpJSON = new Object();
-
-    if (webmlpolyfillPath !== "default") {
-/*
-        let pathArray = webmlpolyfillPath.split("/");
-        let objectPath = rootPath;
-
-        for (let pathName of pathArray) {
-            objectPath = path.resolve(objectPath, pathName);
-        }
-*/
-        for (let [keyLevel1, valueLevel1] of Object.entries(sourceJSON)) {
-            let objectLevel2 = new Object();
-
-            for (let [keyLevel2, valueLevel2] of Object.entries(valueLevel1)) {
-                if (keyLevel2 == "path") {
-                    let tmpPath = objectPath + valueLevel2.slice(valueLevel2.search("/src/"));
-                    objectLevel2[keyLevel2] = tmpPath;
-
-//                    console.log("path: " + tmpPath);
-                } else {
-                    objectLevel2[keyLevel2] = valueLevel2;
-                }
-            }
-
-            let tmpKey = objectPath + keyLevel1.slice(keyLevel1.search("/src/"));
-            tmpJSON[tmpKey] = objectLevel2;
-
-//            console.log("key: " + tmpKey);
-        }
-
-        return tmpJSON;
-    } else {
-        return sourceJSON;
     }
 }
 
@@ -219,9 +179,8 @@ var driver, chromeOption, testURL;
         testURL = remoteURL + "?backend=" + backend;
 
         chromeOption = chromeOption
-//            .setChromeBinaryPath(browser)
-            .addArguments("--disable-features=WebML")
-            .addArguments("--no-sandbox");
+            .setChromeBinaryPath(browser)
+            .addArguments("--disable-features=WebML");
 
         driver = new Builder()
             .forBrowser("chrome")
@@ -245,10 +204,9 @@ var driver, chromeOption, testURL;
             await driver.executeScript("return window.__coverage__;").then(function(json) {
                 if (json !== null) {
                     // Generate coverage test repoert with backend
-                    let jsonTemp = relocationSRC(json);
-                    jsonTemp = excludeHandler(jsonTemp);
+                    let jsonTemp = excludeHandler(json);
                     arrayJSON.push(jsonTemp);
-//                    generateReport(jsonTemp, path.resolve(reportPathVersion, backend), false);
+                    generateReport(jsonTemp, path.resolve(reportPathVersion, backend), false);
                 } else {
                     throw new Error("'window.__coverage__' is undefined");
                 }
@@ -264,16 +222,15 @@ var driver, chromeOption, testURL;
 
     // Generate coverage test repoert with all backends
     var allSourceJSON = integrationJSON(arrayJSON);
-//    generateReport(allSourceJSON, reportPathAll, false);
+    generateReport(allSourceJSON, reportPathAll, false);
     generateReport(allSourceJSON, reportPathShow, true);
-/*
+
     driver = new Builder()
         .forBrowser("chrome")
         .setChromeOptions(new Chrome.Options().setChromeBinaryPath(browser))
         .build();
 
     await driver.get("file://" + path.resolve(reportPathShow, "lcov-report", "index.html"));
-*/
 })().then(function() {
     console.log("coverage report is completed");
 }).catch(function(err) {

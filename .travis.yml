@@ -19,4 +19,4 @@ before_script:
   - export NODE_ENV=coverage
 
 script:
-  - node test-coverage-ci.js
+  - node test-coverage.js
