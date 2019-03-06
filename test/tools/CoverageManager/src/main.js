@@ -19,7 +19,7 @@ testBackend.push("wasm");
 testBackend.push("webgl");
 
 var excludeFiles = new Array();
-excludeFiles.push("nn_ops.js");
+excludeFiles.push("/src/nn/wasm/nn_ops.js");
 
 var arrayJSON = new Array();
 
