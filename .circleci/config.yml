@@ -8,7 +8,8 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run build
-      - run: npm test 
+      - run: npm test
+      - run: export NODE_ENV=coverage
       - run: node test-coverage.js
 workflows:
   version: 2
