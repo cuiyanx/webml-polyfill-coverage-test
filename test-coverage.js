@@ -59,8 +59,6 @@ var excludeHandler = function (sourceJSON) {
         let flag = false;
 
         for (let file of excludeFiles) {
-            console.log("key: " + key);
-            console.log("file: " + file);
             if (key.search(file) !== -1) {
                 flag = true;
             }
@@ -69,7 +67,6 @@ var excludeHandler = function (sourceJSON) {
         if (flag) {
             console.log("exclude file: " + key);
         } else {
-//            console.log("include file: " + key);
             tmpJSON[key] = value;
         }
     }
