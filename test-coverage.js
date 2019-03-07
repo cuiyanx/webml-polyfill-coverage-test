@@ -205,11 +205,6 @@ var driver, chromeOption, testURL;
     var allSourceJSON = integrationJSON(arrayJSON);
     await generateReport(allSourceJSON, reportPathShow, true);
 
-    console.log("send coverage report to coverage web");
-
-    let commands = "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js";
-    await childprocess.execSync(commands, {stdio: "inherit"});
-
     webmlpolyfillHost.kill("SIGTERM");
 })().then(function() {
     console.log("Coverage test completed!");
