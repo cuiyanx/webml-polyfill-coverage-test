@@ -157,7 +157,8 @@ var driver, chromeOption, testURL, webmlpolyfillHost;
     console.log("webml-polyfill web host is start");
 
     if (os.type() == "Windows_NT") {
-        webmlpolyfillHost = childprocess.spawn("node", [".\\node_modules\\webpack-dev-server\\bin\\webpack-dev-server.js"], {env: "coverage", stdio: "inherit"});
+        webmlpolyfillHost = childprocess.spawn("set", ["NODE_ENV"], {stdio: "inherit"});
+        webmlpolyfillHost = childprocess.spawn("node", [".\\node_modules\\webpack-dev-server\\bin\\webpack-dev-server.js"], {env: NODE_ENV=coverage, stdio: "inherit"});
     } else {
         webmlpolyfillHost = childprocess.spawn("./node_modules/webpack-dev-server/bin/webpack-dev-server.js", {stdio: "inherit"});
     }
