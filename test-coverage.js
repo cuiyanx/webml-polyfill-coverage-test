@@ -9,17 +9,13 @@ const fs = require("fs");
 const os = require("os");
 require("chromedriver");
 
-var excludeFiles = new Array();
-
 var remoteURL, reportPathShow;
 if (os.type() == "Windows_NT") {
     remoteURL = "http://localhost:8080\\test\\coverage-index.html";
     reportPathShow = ".\\coverage";
-    excludeFiles.push("\\src\\nn\\wasm\\nn_ops.js");
 } else {
     remoteURL = "http://localhost:8080/test/coverage-index.html";
     reportPathShow = "./coverage";
-    excludeFiles.push("/src/nn/wasm/nn_ops.js");
 }
 
 var testBackend = new Array();
@@ -27,6 +23,9 @@ testBackend.push("wasm");
 testBackend.push("webgl");
 
 var arrayJSON = new Array();
+
+var excludeFiles = new Array();
+excludeFiles.push("/src/nn/wasm/nn_ops.js");
 
 if (!fs.existsSync(reportPathShow)) {
     fs.mkdirSync(reportPathShow);
