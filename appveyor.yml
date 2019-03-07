@@ -6,5 +6,6 @@ install:
     - npm run build
 test_script:
     - npm test
-    - set NODE_ENV=coverage && node test-coverage.js
+    - set NODE_ENV=coverage
+    - node test-coverage.js
 build: off
