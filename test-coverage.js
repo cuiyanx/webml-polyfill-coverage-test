@@ -9,14 +9,8 @@ const fs = require("fs");
 const os = require("os");
 require("chromedriver");
 
-var remoteURL, reportPathShow;
-if (os.type() == "Windows_NT") {
-    remoteURL = "http://localhost:8080\\test\\coverage-index.html";
-    reportPathShow = ".\\coverage";
-} else {
-    remoteURL = "http://localhost:8080/test/coverage-index.html";
-    reportPathShow = "./coverage";
-}
+var remoteURL = "http://localhost:8080/test/coverage-index.html";
+var reportPathShow = "./coverage";
 
 var testBackend = new Array();
 testBackend.push("wasm");
@@ -68,6 +62,7 @@ var excludeHandler = function (sourceJSON) {
         if (flag) {
             console.log("exclude file: " + key);
         } else {
+            console.log("include file: " + key);
             tmpJSON[key] = value;
         }
     }
