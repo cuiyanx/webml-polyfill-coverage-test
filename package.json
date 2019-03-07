@@ -31,7 +31,7 @@
     "babel-plugin-istanbul": "^5.1.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
-    "chromedriver": "^2.43.1",
+    "chromedriver": "2.45.0",
     "coveralls": "^3.0.3",
     "fast-csv": "^2.4.1",
     "globby": "^8.0.1",
