@@ -6,19 +6,29 @@ const until = require("selenium-webdriver").until;
 const Chrome = require("./node_modules/selenium-webdriver/chrome");
 const path = require("path");
 const fs = require("fs");
+const os = require("os");
 require("chromedriver");
 
-var remoteURL = "http://localhost:8080/test/coverage-index.html";
+var excludeFiles = new Array();
+
+var remoteURL, reportPathShow, command;
+if (os.type() == "Windows_NT") {
+    remoteURL = "http://localhost:8080\\test\\coverage-index.html";
+    reportPathShow = ".\\coverage";
+    excludeFiles.push("\\src\\nn\\wasm\\nn_ops.js");
+    command = ".\\node_modules\\webpack-dev-server\\bin\\webpack-dev-server.js";
+} else {
+    remoteURL = "http://localhost:8080/test/coverage-index.html";
+    reportPathShow = "./coverage";
+    excludeFiles.push("/src/nn/wasm/nn_ops.js");
+    command = "./node_modules/webpack-dev-server/bin/webpack-dev-server.js";
+}
+
 var testBackend = new Array();
 testBackend.push("wasm");
 testBackend.push("webgl");
 
-var excludeFiles = new Array();
-excludeFiles.push("/src/nn/wasm/nn_ops.js");
-
 var arrayJSON = new Array();
-
-var reportPathShow = "./coverage";
 
 if (!fs.existsSync(reportPathShow)) {
     fs.mkdirSync(reportPathShow);
@@ -148,7 +158,7 @@ var driver, chromeOption, testURL;
 (async function() {
     console.log("webml-polyfill web host is start");
 
-    var webmlpolyfillHost = childprocess.spawn("./node_modules/webpack-dev-server/bin/webpack-dev-server.js", {stdio: "inherit"});
+    var webmlpolyfillHost = childprocess.spawn(command, {stdio: "inherit"});
 
     webmlpolyfillHost.on("close", function(code, signal) {
         console.log("process webmlpolyfillHost terminated due to receipt of signal");
