@@ -19,7 +19,12 @@ testBackend.push("webgl");
 var arrayJSON = new Array();
 
 var excludeFiles = new Array();
-excludeFiles.push("/src/nn/wasm/nn_ops.js");
+
+if (os.type() == "Windows_NT") {
+    excludeFiles.push("\src\nn\wasm\nn_ops.js");
+} else {
+    excludeFiles.push("/src/nn/wasm/nn_ops.js");
+}
 
 if (!fs.existsSync(reportPathShow)) {
     fs.mkdirSync(reportPathShow);
@@ -62,7 +67,7 @@ var excludeHandler = function (sourceJSON) {
         if (flag) {
             console.log("exclude file: " + key);
         } else {
-            console.log("include file: " + key);
+//            console.log("include file: " + key);
             tmpJSON[key] = value;
         }
     }
