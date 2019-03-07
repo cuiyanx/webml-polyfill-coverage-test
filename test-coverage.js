@@ -21,7 +21,7 @@ var arrayJSON = new Array();
 var excludeFiles = new Array();
 
 if (os.type() == "Windows_NT") {
-    excludeFiles.push("\src\nn\wasm\nn_ops.js");
+    excludeFiles.push("\\src\\nn\\wasm\\nn_ops.js");
 } else {
     excludeFiles.push("/src/nn/wasm/nn_ops.js");
 }
