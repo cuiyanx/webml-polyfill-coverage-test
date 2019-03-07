@@ -11,17 +11,15 @@ require("chromedriver");
 
 var excludeFiles = new Array();
 
-var remoteURL, reportPathShow, command;
+var remoteURL, reportPathShow;
 if (os.type() == "Windows_NT") {
     remoteURL = "http://localhost:8080\\test\\coverage-index.html";
     reportPathShow = ".\\coverage";
     excludeFiles.push("\\src\\nn\\wasm\\nn_ops.js");
-    command = ".\\node_modules\\webpack-dev-server\\bin\\webpack-dev-server.js";
 } else {
     remoteURL = "http://localhost:8080/test/coverage-index.html";
     reportPathShow = "./coverage";
     excludeFiles.push("/src/nn/wasm/nn_ops.js");
-    command = "./node_modules/webpack-dev-server/bin/webpack-dev-server.js";
 }
 
 var testBackend = new Array();
@@ -154,11 +152,15 @@ var generateReport = function (sourceJSON, targetPath, showReport) {
     });
 }
 
-var driver, chromeOption, testURL;
+var driver, chromeOption, testURL, webmlpolyfillHost;
 (async function() {
     console.log("webml-polyfill web host is start");
 
-    var webmlpolyfillHost = childprocess.spawn(command, {stdio: "inherit"});
+    if (os.type() == "Windows_NT") {
+        webmlpolyfillHost = childprocess.spawn("webpack-dev-server", {stdio: "inherit"});
+    } else {
+        webmlpolyfillHost = childprocess.spawn("./node_modules/webpack-dev-server/bin/webpack-dev-server.js", {stdio: "inherit"});
+    }
 
     webmlpolyfillHost.on("close", function(code, signal) {
         console.log("process webmlpolyfillHost terminated due to receipt of signal");
